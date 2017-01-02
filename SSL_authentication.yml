@@ -1,0 +1,60 @@
+### Creat SSL and CA directory
+
+- hosts: ssl
+  tasks:
+    - name: create SSL directory
+      file: state=directory recurse=yes path=/etc/apache2/ssl
+    - name: create CA directory
+      file: state=directory recurse=yes path=/etc/apache2/ssl/CA
+
+### Create self signed certificate
+
+- hosts: ssl
+  gather_facts: yes
+  remote_user: root
+  tasks:
+    - name: pre-requsite for SSL
+      shell: chmod 0700 /etc/apache2/ssl/CA; cd /etc/apache2/ssl/CA; echo "000a" > serial; touch certindex; touch /etc/apache2/ssl/CA/myca.conf
+    - name: create createssl file
+      shell: /bin/echo '#!/bin/bash' > /etc/apache2/ssl/CA/createssl.sh
+    - name: create createssl file
+      shell: /bin/echo '/usr/bin/openssl req -x509 -newkey rsa:2048 -days 3650 -nodes -out ca.cert -subj '/C=IN/ST=MAHARASHTRA/L=MUMBAI/O=RELIANCE/OU=IT/CN=consul3.com'' >> /etc/apache2/ssl/CA/createssl.s
+    - name: create createssl file
+      shell: /bin/echo '/usr/bin/openssl req -newkey rsa:1024 -nodes -out consul.csr -keyout consul.key -subj '/C=IN/ST=MAHARASHTRA/L=MUMBAI/O=RELIANCE/OU=IT/CN=consul3.com'' >> /etc/apache2/ssl/CA/createssl.sh
+    - name: create createssl file
+      shell: cd /etc/apache2/ssl/CA/; sh /etc/apache2/ssl/CA/createssl.sh
+
+
+- hosts: ssl 
+  tasks:
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="[ ca ]"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="default_ca = myca"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="[ myca ]"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="unique_subject = no"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="new_certs_dir = ."
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="certificate = ca.cert"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="database = certindex"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="private_key = privkey.pem"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="serial = serial"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="default_days = 3650"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="default_md = sha1"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="policy = myca_policy"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="x509_extensions = myca_extensions"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="[ myca_policy ]"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="commonName = supplied"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="stateOrProvinceName = supplied"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="countryName = supplied"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="emailAddress = optional"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="organizationName = supplied"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="organizationalUnitName = optional"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="[ myca_extensions ]"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="basicConstraints = CA:false"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="subjectKeyIdentifier = hash"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="subjectKeyIdentifier = hash"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="authorityKeyIdentifier = keyid:always"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="keyUsage = digitalSignature,keyEncipherment"
+    - lineinfile: dest=/etc/apache2/ssl/CA/myca.conf line="extendedKeyUsage = serverAuth,clientAuth"
+
+    - name: create certificate and copy files
+      shell: cd /etc/apache2/ssl/CA;/usr/bin/openssl ca -batch -config myca.conf -notext -in consul.csr -out consul.cert; cp ca.cert consul.key consul.cert ..
+

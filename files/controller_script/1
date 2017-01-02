@@ -1,0 +1,56 @@
+{
+    "bootstrap" : false,
+    "server" : false,
+    "datacenter" : "SE2-PrivateCloud",
+    "data_dir" : "/var/consul",
+    "encrypt" : "RYBg5+WxobPhqUpHW5RthA==",
+    "log_level" : "INFO",
+    "bind_addr": "192.168.0.9",
+    "start_join" : ["192.168.0.6", "192.168.0.7","192.168.0.8"],
+    "node_name": "controller-node-10",
+    "checks": [
+        {
+            "id" : "check_cpu_utilization",
+            "notes" : "Greater than 50% warn, greater than 75% fail.",
+            "name" : "CPU Utilization",
+            "script" : "/etc/consul.d/consul_demo/scripts/cpu_utilization.sh",
+            "interval" : "10s"
+        },
+        {
+          "id" : "check_mem_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "MEM Utilization",
+          "script" : "/etc/consul.d/consul_demo/scripts/mem_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_hdd_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "HDD Utilization",
+          "script" : "/etc/consul.d/consul_demo/scripts/hdd_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id": "ssh",
+          "name": "SSH TCP on port 22",
+          "tcp": "localhost:22",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "apache",
+          "name": "APACHE TCP on port 80",
+          "tcp": "192.168.0.9:80",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+	{
+          "id": "check_crm-rabbitmq-status",
+          "name": "crm-rabbitmq-status",
+          "script": "/etc/consul.d/consul_demo/scripts/crm-rabbitmq-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        }
+
+    ]
+}

@@ -1,0 +1,469 @@
+{
+    "bootstrap" : false,
+    "server" : false,
+    "datacenter" : "{{ consul_datacenter_name }}",
+    "data_dir" : "{{ consul_data_path }}",
+    "encrypt" : "RYBg5+WxobPhqUpHW5RthA==",
+    "log_level" : "{{ consul_log_level }}",
+    "enable_syslog" : {{ consul_syslog_enable }},
+    "bind_addr": "{{ ansible_eth2.ipv4.address }}",
+    "start_join" : ["{{ consul_bootstrap_ip }}", "{{ consul_server1_ip }}", "{{ consul_server2_ip }}"],
+    "node_name": "{{ ansible_hostname }}",
+    "checks": [
+        {
+            "id" : "check_cpu_utilization",
+            "notes" : "Greater than 50% warn, greater than 75% fail.",
+            "name" : "CPU Utilization",
+            "script" : "{{ consul_scritp_dir }}/cpu_utilization.sh",
+            "interval" : "10s"
+        },
+        {
+          "id" : "check_mem_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "MEM Utilization",
+          "script" : "{{ consul_scritp_dir }}/mem_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_hdd_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "HDD Utilization",
+          "script" : "{{ consul_scritp_dir }}/hdd_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_hdd_boot-partition_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "HDD Boot Partition Utilization",
+          "script" : "{{ consul_scritp_dir }}/hdd_boot-partition_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_inode_hdd_boot-partition_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "Free inodes is less on /boot partition",
+          "script" : "{{ consul_scritp_dir }}/inode_boot_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_inode_hdd_slash-partition_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "Free inodes is less on / partition",
+          "script" : "{{ consul_scritp_dir }}/inode_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id": "ssh",
+          "name": "SSH TCP on port 22",
+          "tcp": "localhost:22",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "mysql",
+          "name": "MYSQL port monitoring",
+          "tcp": "192.168.0.9:3307",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "mysql_galera_cluster",
+          "name": "MYSQL GALERA CLUSTER monitoring",
+          "tcp": "192.168.0.9:4567",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "Memcached service is DOWN",
+          "name": "Memcached service is DOWN",
+          "tcp": "192.168.0.9:11211",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "apache",
+          "name": "APACHE TCP on port 80",
+          "tcp": "192.168.0.9:80",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "RabbitMQ Server service beam.smp is down",
+          "name": "RabbitMQ Server service beam.smp is down",
+          "tcp": "192.168.0.9:5672",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "RabbitMQ Server service beam.smp is down",
+          "name": "RabbitMQ Server service beam.smp is down",
+          "tcp": "192.168.0.9:41055",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "Nova API Metadata Server is listening on port",
+          "name": "Nova API Metadata Server is listening on port",
+          "tcp": "192.168.0.9:8775",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "Keystone Admin API Server service is down",
+          "name": "Keystone Admin API Server service is down",
+          "tcp": "192.168.0.9:35357",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "Keystone API Server service is down",
+          "name": "Keystone API Server service is down",
+          "tcp": "192.168.0.9:5000",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+	{
+          "id": "check_crm-rabbitmq-status",
+          "name": "crm-rabbitmq-status",
+          "script": "{{ consul_scritp_dir }}/crm-rabbitmq-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+	{
+          "id": "check_crm-mysql-status",
+          "name": "crm-mysql-status",
+          "script": "{{ consul_scritp_dir }}/crm-mysql-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_crm-haproxy-status",
+          "name": "crm-haproxy-status",
+          "script": "{{ consul_scritp_dir }}/crm-haproxy-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_interface_status",
+          "name": "interface-status",
+          "script": "{{ consul_scritp_dir }}/interface-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_cinder-api_status",
+          "name": "Cinder-api status",
+          "script": "{{ consul_scritp_dir }}/cinder-api-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_cinder-volume_status",
+          "name": "Cinder-volume status",
+          "script": "{{ consul_scritp_dir }}/cinder-volume-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_cinder_snapshot_progress_slowness",
+          "name": "Cinder Server: Snapshots are being slow",
+          "script": "{{ consul_scritp_dir }}/check_cinder_snapshot_progress_slowness.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_cinder-scheduler_status",
+          "name": "Cinder-scheduler status",
+          "script": "{{ consul_scritp_dir }}/cinder-scheduler-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_glance-api_status",
+          "name": "Glance-api status",
+          "script": "{{ consul_scritp_dir }}/glance-api-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_glance-registry_check",
+          "name": "Glance-registry status",
+          "script": "{{ consul_scritp_dir }}/glance-registry-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "glance-api_process_check",
+          "name": "Glance-Api status",
+          "script": "{{ consul_scritp_dir }}/glance-api_process_check.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "keystone_server_process_check",
+          "name": "Keystone Server process is not running",
+          "script": "{{ consul_scritp_dir }}/keystone_server_process_check.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-api_status",
+          "name": "Nova-api status",
+          "script": "{{ consul_scritp_dir }}/nova-api-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-cert_status",
+          "name": "nova-cert status",
+          "script": "{{ consul_scritp_dir }}/nova-cert-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-conductor_status",
+          "name": "nova-conductor status",
+          "script": "{{ consul_scritp_dir }}/nova-conductor-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-consoleauth_status",
+          "name": "nova-consoleauth status",
+          "script": "{{ consul_scritp_dir }}/nova-consoleauth-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-novncproxy_status",
+          "name": "nova-novncproxy status",
+          "script": "{{ consul_scritp_dir }}/nova-novncproxy-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-objectstore_status",
+          "name": "nova-objectstore status",
+          "script": "{{ consul_scritp_dir }}/nova-objectstore-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_nova-scheduler_status",
+          "name": "nova-scheduler status",
+          "script": "{{ consul_scritp_dir }}/nova-scheduler-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_ceph_status",
+          "name": "Ceph status",
+          "script": "{{ consul_scritp_dir }}/ceph-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_ceph_NTP_skew-detected_status",
+          "name": "Ceph NTP clock skew detected",
+          "script": "{{ consul_scritp_dir }}/ceph-skew-detected.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "murano-api-status",
+          "name": "Murano API Server process is not running",
+          "script": "{{ consul_scritp_dir }}/murano-api-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "murano-engine-status",
+          "name": "Murano Engine Server process is not running",
+          "script": "{{ consul_scritp_dir }}/murano-engine-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_lack_free_swap_space",
+          "name": "Lack of free swap space",
+          "script": "{{ consul_scritp_dir }}/lack_of_swap_space.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_cinder_snapshot_check_deletion_state",
+          "name": "Cinder SNAPSHOTS stuck in DELETION State",
+          "script": "{{ consul_scritp_dir }}/lack_of_swap_space.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_apache_process_running",
+          "name": "Apache process check",
+          "script": "{{ consul_scritp_dir }}/apache_process_running.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_keystone_service",
+          "name": "Keystone service check",
+          "script": "{{ consul_scritp_dir }}/keystone_service.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_max_number_of_opened_files_is_too_low",
+          "name": "Open files is too low",
+          "script": "{{ consul_scritp_dir }}/max_number_of_opened_files_is_too_low.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_max_number_of_proceses_is_too_low",
+          "name": "Number of process is too low",
+          "script": "{{ consul_scritp_dir }}/keystone_service.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "password_file_change",
+          "name": "File /etc/passwd was changed",
+          "script": "{{ consul_scritp_dir }}/password_file_change.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "host_name_change",
+          "name": "Hostname was changed",
+          "script": "{{ consul_scritp_dir }}/host_name_change.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "sahara_service_check",
+          "name": "SAHARA service check",
+          "script": "{{ consul_scritp_dir }}/sahara_service_check.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "nova_manage_service_list_failed",
+          "name": "Nova Manage service list shows failed services",
+          "script": "{{ consul_scritp_dir }}/nova_manage_service_list_failed.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "nova_manage_service_list_failedcinder_volumes_stuck_deletion_state",
+          "name": "Cinder VOLUMES in stuck DELETION State",
+          "script": "{{ consul_scritp_dir }}/cinder_volumes_stuck_deletion_state.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "namespace_find_ril",
+          "name": "Name Space Router - RIL Network",
+          "script": "{{ consul_scritp_dir }}/namespace_find_ril.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "namespace_find_rjil",
+          "name": "Name Space Router - RJIL Network",
+          "script": "{{ consul_scritp_dir }}/namespace_find_rjil.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "too_many_processes_runing_on_host",
+          "name": "Too many processes running",
+          "script": "{{ consul_scritp_dir }}/too_many_processes_runing_on_host.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "raid_check",
+          "name": "HP RAID status check",
+          "script": "{{ consul_scritp_dir }}/raid_check.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "glance_image_number",
+          "name": "Number of images in glance",
+          "script": "{{ consul_scritp_dir }}/glance_image_number.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "glance-registry_process_check",
+          "name": "Glance Registry Server process is not running",
+          "script": "{{ consul_scritp_dir }}/glance-registry_process_check.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "glance_image_killed-state",
+          "name": "Glance Image in 'Killed' State",
+          "script": "{{ consul_scritp_dir }}/glance_image_killed-state.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "glance_image_queued",
+          "name": "Glance Image/s in 'Queued' State",
+          "script": "{{ consul_scritp_dir }}/glance_image_queued.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "glance_image_saving",
+          "name": "Glance Image/s in 'Saving' State",
+          "script": "{{ consul_scritp_dir }}/glance_image_saving.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "heat-api-status",
+          "name": "Heat API service is not running",
+          "script": "{{ consul_scritp_dir }}/heat-api-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "heat-api-cfn-status",
+          "name": "Heat API-CFN service is not running",
+          "script": "{{ consul_scritp_dir }}/heat-api-cfn-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "heat-api-cloudwatch-status",
+          "name": "Heat API-CLOUDWATCH service is not running",
+          "script": "{{ consul_scritp_dir }}/heat-api-cloudwatch-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "memcached_process_check",
+          "name": "Memcached process is not running",
+          "script": "{{ consul_scritp_dir }}/memcached_process_check.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "disk_io_overloaded",
+          "name": "Disk I/O is overloaded",
+          "script": "{{ consul_scritp_dir }}/disk_io_overloaded.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "system_last_rebooted",
+          "name": "System has just been restarted",
+          "script": "{{ consul_scritp_dir }}/system_last_rebooted.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        }
+    ]
+}

@@ -1,0 +1,184 @@
+{
+    "bootstrap" : false,
+    "server" : false,
+    "datacenter" : "{{ consul_datacenter_name }}",
+    "data_dir" : "{{ consul_data_path }}",
+    "encrypt" : "RYBg5+WxobPhqUpHW5RthA==",
+    "log_level" : "{{ consul_log_level }}",
+	"enable_syslog" : {{ consul_syslog_enable }},
+    "start_join" : ["{{ consul_bootstrap_ip }}", "{{ consul_server1_ip }}", "{{ consul_server2_ip }}"],
+    "node_name": "{{ ansible_hostname }}",
+    "checks": [
+        {
+          "id" : "check_osd_utilization",
+          "notes" : "greater than 70% Warn.",
+          "name" : "OSD Utilization",
+          "script" : "{{ consul_scritp_dir }}/osd_utilization-70%.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "ntpd process check",
+          "notes" : "ntp process check.",
+          "name" : "NTP Process Check ",
+          "script" : "{{ consul_scritp_dir }}/ntp_check.sh",
+          "interval" : "10s"
+        },
+
+        {
+          "id" : "check_osd_process",
+          "notes" : "ceph osd process check.",
+          "name" : "OSD Process check",
+          "script" : "{{ consul_scritp_dir }}/Ceph_OSD_process_running_check.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_osd_utilization_80",
+          "notes" : "greater than 80% Warn.",
+          "name" : "OSD Utilization",
+          "script" : "{{ consul_scritp_dir }}/osd_utilization-80%.sh",
+          "interval" : "10s"
+        },
+
+        {
+          "id" : "check_osd_utilization_90",
+          "notes" : "greater than 90% Warn.",
+          "name" : "OSD Utilization",
+          "script" : "{{ consul_scritp_dir }}/osd_utilization-90%.sh",
+          "interval" : "10s"
+        },
+        {
+            "id" : "check_cpu_utilization",
+            "notes" : "Greater than 50% warn, greater than 75% fail.",
+            "name" : "CPU Utilization",
+            "script" : "{{ consul_scritp_dir }}/cpu_utilization.sh",
+            "interval" : "10s"
+        },
+        {
+          "id" : "check_mem_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "MEM Utilization",
+          "script" : "{{ consul_scritp_dir }}/mem_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_hdd_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "HDD Utilization",
+          "script" : "{{ consul_scritp_dir }}/hdd_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id": "check_boot_hdd_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name": "HDD boot Utilization",
+          "script": "{{ consul_scritp_dir }}/hdd_utilization_boot.sh",
+          "interval": "10s"
+        },
+        {
+          "id": "check_inode_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name": "Inode Utilization",
+          "script": "{{ consul_scritp_dir }}/inode_utilization.sh",
+          "interval": "10s"
+        },
+        {
+          "id": "check_inode_boot_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name": "Inode Boot Utilization",
+          "script": "{{ consul_scritp_dir }}/inode_boot_utilization.sh",
+          "interval": "10s"
+        },
+         {
+          "id": "check lack_of_swap_space",
+          "name": "Lack of Swap Space",
+          "script": "{{ consul_scritp_dir }}/lack_of_swap_space.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check swap_space_less_10_percent",
+          "name": "Swap Space Less than 10 Percent",
+          "script": "{{ consul_scritp_dir }}/swap_space_less_10percent.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check Password File Changed",
+          "name": "Password file modified",
+          "script": "{{ consul_scritp_dir }}/password_file_change.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "Max number of opened files is too low",
+          "name": "Max number of opened files is too low",
+          "script": "{{ consul_scritp_dir }}/max_number_of_opened_files_is_too_low.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+        {
+          "id": "Max number of processes is too low on",
+          "name": "Max number of processes is too low",
+          "script": "{{ consul_scritp_dir }}/max_number_of_proceses_is_too_low.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+         {
+          "id": "Disk I/O is overloaded",
+          "name": "Disk I/O is overloaded on host",
+          "script": "{{ consul_scritp_dir }}/disk_io_overloaded.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+         {
+          "id": "Host information is changed",
+          "name": "etc-hosts file is modified",
+          "script": "{{ consul_scritp_dir }}/host_information_change.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+        {
+          "id": "Host Name is changed",
+          "name": "Hostname file is modified",
+          "script": "{{ consul_scritp_dir }}/host_name_change.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+        {
+          "id": "Too many processes running on",
+          "name": "Too many processes running on host",
+          "script": "{{ consul_scritp_dir }}/too_many_processes_runing_on_host.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+        {
+          "id": "RAID_CHECK",
+          "name": "HP RAID status check",
+          "script": "{{ consul_scritp_dir }}/hp_raid_status_check.sh",
+          "interval": "10s",
+          "timeout": "10s"
+        },
+         {
+          "id": "System Last Rebooted",
+          "name": "Node last rebooted",
+          "script": "{{ consul_scritp_dir }}/system_last_rebooted.sh",
+          "interval": "300s",
+          "timeout": "10s"
+        },
+
+        {
+          "id": "ssh",
+          "name": "SSH TCP on port 22",
+          "tcp": "localhost:22",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_interface_status",
+          "name": "interface-status",
+          "script": "{{ consul_scritp_dir }}/interface-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        }
+    ]
+}

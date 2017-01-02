@@ -1,0 +1,24 @@
+<VirtualHost *:*>
+    ServerAdmin your@email.address.com
+    DocumentRoot "/etc/consul.d/ui"
+    ServerName node-1
+#    ErrorLog "logs/consul-error_log"
+
+    SSLEngine On
+    SSLCertificateFile /etc/apache2/ssl/ssl.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/ssl.key
+
+    proxyPass / http://127.0.0.1:8080/
+    ProxyPassReverse / http://127.0.0.1:8080/
+    ProxyRequests Off
+    <Location />
+        Order allow,deny
+        Allow from all
+    </Location>
+    <Location />
+         AuthType basic
+         AuthName "consul"
+         AuthUserFile "/etc/apache2/.htpasswd"
+         Require valid-user
+ </Location>
+</VirtualHost>

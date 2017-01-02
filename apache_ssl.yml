@@ -1,0 +1,44 @@
+---
+ - hosts: bootstrap
+   gather_facts: yes
+   tags:  bootstrap
+   vars_files:
+    - vars/main.yml
+   tasks:
+
+    - name: Create apache  ssl directory
+      file: path={{ consul_apache_ssl_dir }} state=directory
+
+    - name: enable apache module
+      apache2_module: state=present name=proxy
+      apache2_module: state=present name=proxy_http
+      apache2_module: state=present name=headers
+      apache2_module: state=present name=proxy_connect
+      apache2_module: state=present name=proxy_html
+      apache2_module: state=present name=ssl
+      notify:
+       - Reload Apache2
+
+    - name: ssl
+      shell:  a2enmod ssl
+      notify:
+       - Reload Apache2
+
+    - name: create ssl certificate
+      shell: openssl req -subj '/C=IN/ST=MAHARASHTRA/L=MUMBAI/O=RELIANCE/OU=IT/CN=consul3.com' -new -newkey rsa:2048 -sha256 -days 365 -nodes -x509 -keyout {{ consul_apache_ssl_dir }}/ssl.key -out {{ consul_apache_ssl_dir }}/ssl.crt
+
+    - name: URL user and password
+      htpasswd: path=/etc/apache2/.htpasswd name={{ consul_apache_user }}  password={{ consul_apache_password }} crypt_scheme=md5_crypt
+      notify:
+       - Reload Apache2
+
+    - name: copy apache teamplate
+      template: src=templates/ssl_proxy.j2   dest=/etc/apache2/sites-enabled/000-default
+      notify:
+       - Reload Apache2
+
+
+
+   handlers:
+    - name: Restart Apache2
+      service: name=apache2  state=reloaded

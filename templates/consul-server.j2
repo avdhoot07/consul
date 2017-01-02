@@ -1,0 +1,10 @@
+# Consul Agent (Upstart unit)
+description "Consul Agent"
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [06]
+
+#exec sudo -u consul -g consul consul agent -config-dir /etc/consul.d/bootstrap -advertise=192.168.0.6 >> /var/log/consul 2>&1
+exec  consul agent -config-dir /etc/consul.d/server -advertise={{ ansible_eth2.ipv4.address }} >> /var/log/consul 2>&1
+respawn
+respawn limit 10 10
+kill timeout 10

@@ -1,0 +1,65 @@
+---
+- hosts: bootstrap
+  gather_facts: yes
+  tags:  bootstrap
+  vars_files:
+   - vars/main.yml
+  tasks:
+   
+   - name: copy consul zip file
+     copy: src=files/{{ consul_pkg }} dest={{ consul_temp }}
+     register: consul_copy
+
+   - name: copy consul zip file
+     command: echo "consul copy failed"
+     when: consul_copy | failed
+
+   - name: unarchive consul 
+     unarchive: src={{ consul_temp }}/{{ consul_pkg }} dest={{ consul_bin_path }} copy=no
+     register: unarchive_consul
+     when: consul_copy | success
+
+   - name: Create bootstrap  directory
+     file: path={{ consul_bootstrap_dir }} state=directory
+     when: unarchive_consul | success
+     
+   - name: create ssl directory
+     file: path={{ consul_ssl_dir }} state=directory
+     when: unarchive_consul | success
+
+   - name: Create script directory
+     file: path={{ consul_scritp_dir }} state=directory
+     when: unarchive_consul | success
+
+   - name: copy ssl Certificate to node   
+     copy: src=files/ssl/  dest={{ consul_ssl_dir }}
+     when: unarchive_consul | success
+
+   - name: copy consul ui file
+     copy: src=files/{{ consul_uipkg }}  dest={{ consul_temp }}
+     register: copy_consul_ui
+     when: unarchive_consul | success
+
+   - name: Create webui  directory
+     file: path={{ consul_uidir }} state=directory  
+     when: copy_consul_ui |success
+
+   - name: unarchive consul ui
+     unarchive: src={{ consul_temp }}/{{ consul_uipkg }} dest={{ consul_uidir }}
+     when: copy_consul_ui |success
+
+   - name: copy script to script directory
+     copy: src=files/scripts/  dest={{ consul_scritp_dir }} mode=0777
+     when: unarchive_consul | success
+   
+   - name: bootstrap template
+     template: src=templates/bootstrap.j2  dest={{ consul_bootstrap_dir }}/config.json
+     when: unarchive_consul | success
+    
+   - name: consul boot scritp 
+     template: src=templates/consul.j2  dest=/etc/init/consul.conf
+     when: unarchive_consul | success
+
+   - name: start consul server
+     command: start consul
+

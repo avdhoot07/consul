@@ -1,0 +1,34 @@
+---
+consul_version: "0.6.4"
+consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+consul_bin_path: "/usr/local/bin"
+consul_etc_path: "/etc/consul.d"
+consul_bootstrap: "bootstrap"
+consul_server: "server"
+consul_client: "client"
+consul_script: "script"
+consul_bootstrap_dir: "{{ consul_etc_path }}/{{ consul_bootstrap  }}"
+consul_server_dir: "{{ consul_etc_path }}/{{ consul_server  }}"
+consul_client_dir: "{{ consul_etc_path }}/{{ consul_client  }}"
+consul_scritp_dir:  "{{ consul_etc_path }}/{{ consul_script }}"
+consul_ssl_dir: "{{ consul_etc_path }}/ssl"
+consul_data_path: "/var/consul"
+consul_log_path: "/var/log/consul"
+consul_log_level: "INFO"
+consul_syslog_enable: "true"
+consul_ui_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_web_ui.zip"
+consul_temp: "/tmp"
+consul_pkg: "consul_{{ consul_version }}_linux_amd64.zip"
+consul_uipkg: "consul_{{ consul_version }}_web_ui.zip"
+consul_uidir: "{{ consul_etc_path }}/ui"
+consul_bootstrap_ip: 10.135.162.47
+consul_server1_ip: 10.135.162.52
+consul_server2_ip: 10.135.162.41
+consul_webui_ip1: 0.0.0.0
+consul_webui_ip2: 0.0.0.0
+consul_webui_ip3: 0.0.0.0
+consul_datacenter_name: PE-1
+client_ip_range: 10.135.162.0/24
+consul_apache_ssl_dir: /etc/apache2/ssl
+consul_apache_user: admin
+consul_apache_password: Consul@123

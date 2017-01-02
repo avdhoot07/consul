@@ -1,0 +1,232 @@
+{
+    "bootstrap" : false,
+    "server" : false,
+    "datacenter" : "{{ consul_datacenter_name }}",
+    "data_dir" : "{{ consul_data_path }}",
+    "encrypt" : "RYBg5+WxobPhqUpHW5RthA==",
+    "log_level" : "{{ consul_log_level }}",
+    "enable_syslog" : {{ consul_syslog_enable }},
+    "bind_addr": "{{ ansible_eth2.ipv4.address }}", 
+    "start_join" : ["{{ consul_bootstrap_ip }}", "{{ consul_server1_ip }}", "{{ consul_server2_ip }}"],
+    "node_name": "{{ ansible_hostname }}",
+    "checks": [
+        {
+          "id" : "check_cpu_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "CPU Utilization",
+          "script" : "{{ consul_scritp_dir }}/cpu_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_mem_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "MEM Utilization",
+          "script" : "{{ consul_scritp_dir }}/mem_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_boot_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "Boot Partition Utilization",
+          "script" : "{{ consul_scritp_dir }}/hdd_boot-partition_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_hdd_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "HDD Utilization",
+          "script" : "{{ consul_scritp_dir }}/hdd_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id": "ssh",
+          "name": "SSH TCP on port 22",
+          "tcp": "localhost:22",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_swap_status",
+          "name": "Swap Space Status",
+          "script": "{{ consul_scritp_dir }}/lack_of_swap_space.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_interface_status",
+          "name": "interface-status",
+          "script": "{{ consul_scritp_dir }}/interface-status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_IO_status",
+          "name": "Disk IO Status",
+          "notes" : "Greater than 10% warn, greater than 25% fail.",
+          "script": "{{ consul_scritp_dir }}/disk_io_overloaded.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_max_open_files_status",
+          "name": "Max Open Files",
+          "script": "{{ consul_scritp_dir }}/max_number_of_opened_files_is_too_low.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_boot_inode_status",
+          "name": "Boot Inode Utilization",
+          "script": "{{ consul_scritp_dir }}/inode_boot_utilization.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_root_inode_status",
+          "name": "Root Inode Utilization",
+          "script": "{{ consul_scritp_dir }}/inode_utilization.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_reboot_status",
+          "name": "System Boot Status",
+          "script": "{{ consul_scritp_dir }}/system_last_rebooted.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_max_processes_status",
+          "name": "Max Processes",
+          "script": "{{ consul_scritp_dir }}/max_number_of_proceses_is_too_low.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_password_file_status",
+          "name": "Password File Status",
+          "script": "{{ consul_scritp_dir }}/password_file_change.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_hostname_status",
+          "name": "Hostname Change",
+          "script": "{{ consul_scritp_dir }}/host_name_change.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_cassandra_status",
+          "name": "Cassandra-Server Status",
+          "script": "{{ consul_scritp_dir }}/cassandra_server_process.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_contrail-ntpsync_status",
+          "name": "Contrail NTPSYNC Status",
+          "script": "{{ consul_scritp_dir }}/contrail_ntpsync_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_contrail-analytics-api_status",
+          "name": "Contrail-Analytics-API Status",
+          "script": "{{ consul_scritp_dir }}/contrail_analytics_api_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_contrail-api_status",
+          "name": "Contrail-API Status",
+          "script": "{{ consul_scritp_dir }}/contrail_api_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_contrail-collector_status",
+          "name": "Contrail-Collector Status",
+          "script": "{{ consul_scritp_dir }}/contrail_collector_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_contrail-control_status",
+          "name": "Contrail-Control Status",
+          "script": "{{ consul_scritp_dir }}/contrail_control_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_contrail-database_status",
+          "name": "Contrail-Database Status",
+          "script": "{{ consul_scritp_dir }}/contrail_database_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_haproxy_status",
+          "name": "HAPROXY Status",
+          "script": "{{ consul_scritp_dir }}/haproxy_service_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_ifmap_status",
+          "name": "IFMAP Status",
+          "script": "{{ consul_scritp_dir }}/ifmap_service_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_keepalived_status",
+          "name": "Keepalived Service Status",
+          "script": "{{ consul_scritp_dir }}/keepalived_service_process.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_neutron-server_status",
+          "name": "Neutron-Server Status",
+          "script": "{{ consul_scritp_dir }}/neutron_server_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_rabbitmq-server_status",
+          "name": "Rabbitmq Server Status",
+          "script": "{{ consul_scritp_dir }}/rabbitmq_server_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_rabbitmq-queue_status",
+          "name": "Rabbitmq Queue Status",
+          "script": "{{ consul_scritp_dir }}/rabbitmq_queue_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_redis-server_status",
+          "name": "Redis-Server Status",
+          "script": "{{ consul_scritp_dir }}/redis_server_status.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "check_zookeeper-server_status",
+          "name": "Zookeeper-Server Status",
+          "script": "{{ consul_scritp_dir }}/zookeeper_server_process.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        },
+        {
+          "id": "Cassandra_Filesystem_Status",
+          "name": "Cassandra_Filesystem_Used",
+          "script": "{{ consul_scritp_dir }}/cassandra_filesystem.sh",
+          "interval": "10s",
+          "timeout": "1s"
+        }
+    ]
+}

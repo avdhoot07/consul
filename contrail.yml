@@ -1,0 +1,42 @@
+- hosts: contrail
+  gather_facts: yes
+  tags: contrail
+  vars_files:
+   - vars/main.yml
+  tasks:
+
+   - name: copy consul zip file
+     copy: src=files/{{ consul_pkg }} dest={{ consul_temp }}
+     register: consul_copy
+
+   - name: copy consul zip file
+     command: echo "consul copy failed"
+     when: consul_copy | failed
+
+   - name: unarchive consul
+     unarchive: src={{ consul_temp }}/{{ consul_pkg }} dest={{ consul_bin_path }} copy=no
+     register: unarchive_consul
+     when: consul_copy | success
+
+   - name: Create client  directory
+     file: path={{ consul_client_dir }} state=directory
+     when: unarchive_consul | success
+
+   - name: Create script directory
+     file: path={{ consul_scritp_dir }} state=directory
+     when: unarchive_consul | success
+
+   - name: copy script to script directory
+     copy: src=files/contrail_scritp/  dest={{ consul_scritp_dir }} mode=0777
+     when: unarchive_consul | success
+
+   - name: copy client template
+     template: src=templates/contrail.j2  dest={{ consul_client_dir }}/config.json
+     when: unarchive_consul | success
+
+   - name: consul boot scritp
+     template: src=templates/consul-client.j2  dest=/etc/init/consul.conf
+     when: unarchive_consul | success
+
+   - name: start consul server
+     command: start consul

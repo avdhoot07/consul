@@ -1,0 +1,48 @@
+{
+    "bootstrap" : false,
+    "server" : true,
+    "datacenter" : "{{ consul_datacenter_name }}",
+    "data_dir" : "{{ consul_data_path }}",
+    "ui_dir" : "{{ consul_uidir }}",
+    "encrypt" : "RYBg5+WxobPhqUpHW5RthA==",
+    "ca_file": "/etc/consul.d/ssl/ca.cert",
+    "cert_file": "/etc/consul.d/ssl/consul.cert",
+    "key_file": "/etc/consul.d/ssl/consul.key",
+    "log_level" : "{{ consul_log_level }}",
+    "enable_syslog" : {{ consul_syslog_enable }},
+    "bind_addr": "{{ ansible_eth0.ipv4.address }} ",
+    "start_join" : ["{{ consul_bootstrap_ip }}", "{{ consul_server1_ip }}", "{{ consul_server2_ip }}"],
+    "node_name": "{{ ansible_hostname }} ",
+    "http_api_response_headers" : {
+        "Access-Control-Allow-Origin" : "*"
+    },
+    "addresses" : {
+        "https": "{{ ansible_eth0.ipv4.address }}"
+    },
+    "ports" : {
+        "https" : 443
+    },
+    "checks": [
+        {
+            "id" : "check_cpu_utilization",
+            "notes" : "Greater than 50% warn, greater than 75% fail.",
+            "name" : "CPU Utilization",
+            "script" : "{{ consul_scritp_dir }}/cpu_utilization.sh",
+            "interval" : "10s"
+        },
+        {
+          "id" : "check_mem_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "MEM Utilization",
+          "script" : "{{ consul_scritp_dir }}/mem_utilization.sh",
+          "interval" : "10s"
+        },
+        {
+          "id" : "check_hdd_utilization",
+          "notes" : "Greater than 50% warn, greater than 75% fail.",
+          "name" : "HDD Utilization",
+          "script" : "{{ consul_scritp_dir }}/hdd_utilization.sh",
+          "interval" : "10s"
+        }
+    ]
+}

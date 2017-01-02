@@ -1,0 +1,57 @@
+#################
+##Consul-alerts Installation on MongoDB node
+##################
+#
+
+- hosts: alerts
+  gather_facts: yes
+  remote_user: root
+  tags: consul-alerts installation
+  tasks:
+
+
+  - name: Consul-alerts Installation
+    shell: export http_proxy="http://10.135.80.164:8678" && export https_proxy="http://10.135.80.164:8678"; mkdir /usr/local/consul; cd /usr/local/consul; wget https://github.com/AcalephStorage/consul-alerts/releases/download/v0.1.0/consul-alerts-0.1.0-linux-amd64.tar; tar -xvf consul-alerts-0.1.0-linux-amd64.tar; cp consul-alerts /usr/bin/
+    ignore_errors: yes
+    register: png
+  - debug: var=png.stdout
+
+#################
+###Setting KEY values on node
+###################
+
+- hosts: alerts
+  gather_facts: yes
+  remote_user: root
+  tags: keyvalue-set
+  tasks:
+
+  - name: To set KEY value in node
+    shell: curl -X PUT  http://localhost:8500/v1/kv/consul-alerts/config/notifiers; curl -X PUT  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email; curl -X PUT -d true  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/enabled; curl -X PUT -d consul-alerts  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/cluster-name; curl -X PUT -d 10.137.2.23  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/url; curl -X PUT -d 25  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/port; curl -X PUT -d "Consul Alerts"  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/sender-alias; curl -X PUT -d avdhoot.patankar@ril.com  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/sender-email; curl -X PUT -d true  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/one-per-alert; curl -X PUT -d true  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/one-per-node; curl -X PUT -d '["Cloud.Devops@ril.com"]'  http://localhost:8500/v1/kv/consul-alerts/config/notifiers/email/receivers; curl -X PUT -d true http://localhost:8500/v1/kv/consul-alerts/config/checks/enabled
+    ignore_errors: yes
+    register: png
+  - debug: var=png.stdout
+  - pause: prompt="Check if key value is properly set, if YES press ENTER"
+
+#################
+###Start consul-alerts service through screen
+###################
+
+- hosts: alerts
+  gather_facts: yes
+  remote_user: root
+  tags: start_consul-alerts
+  tasks:
+
+  - name: copy lines in screen-consul.sh
+    shell: echo $'#!/bin/bash\nDCNAME=`consul members | awk {'print \$7'} | grep -v DC | head -1`' > /root/screen-consul.sh; echo consul-alerts start --consul-dc="$DCNAME" --watch-checks --watch-events >> /root/screen-consul.sh
+
+  - pause: seconds=20
+
+  - name: Screen start for consul-alerts
+    shell: screen -d -m -t screen-consul sh /root/screen-consul.sh
+    ignore_errors: yes
+    register: png
+  - debug: var=png.stdout
+  - pause: prompt="Pause to start ceph service" seconds=30
+
